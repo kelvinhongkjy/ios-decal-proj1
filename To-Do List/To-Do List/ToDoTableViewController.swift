@@ -21,6 +21,7 @@ class ToDoTableViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        Timer.scheduledTimer(withTimeInterval: 1, repeats: true, block: self.updateItems)
     }
 
     override func didReceiveMemoryWarning() {
@@ -35,6 +36,24 @@ class ToDoTableViewController: UITableViewController {
             } else {
                 self.outstandingItems.append(i)
             }
+            self.tableView.reloadData()
+        }
+    }
+    
+    func updateItems(_ _:Timer) {
+        var updated = false
+        var updatedItems: Array<ToDoItem> = []
+        for item in self.completedItems {
+            if let d = item.completeDate {
+                if d.timeIntervalSinceNow > -60*60*24 {
+                    updatedItems.append(item)
+                } else {
+                    updated = true
+                }
+            }
+        }
+        if updated {
+            self.completedItems = updatedItems
             self.tableView.reloadData()
         }
     }
